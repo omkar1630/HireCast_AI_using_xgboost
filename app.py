@@ -5,7 +5,7 @@ import pandas as pd
 
 # Set page configurations for a wide, modern look
 st.set_page_config(
-    page_title="Student Success Predictor",
+    page_title="HireCast AI - Placement Predictor",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="expanded"
