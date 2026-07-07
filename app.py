@@ -6,7 +6,7 @@ import pandas as pd
 # Set page configurations for a wide, modern look
 st.set_page_config(
     page_title="HireCast AI - Placement Predictor",
-    page_icon="🎓",
+    page_icon="💼",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -36,25 +36,25 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Title Header
-st.markdown('<div class="main-title">🎓 Student Performance Intelligence System</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Enter the student behavioral and academic metrics in the sidebar to forecast outcomes.</div>', unsafe_allow_html=True)
+# Title Header updated for HireCast AI
+st.markdown('<div class="main-title">💼 HireCast AI: Placement Prediction System</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Enter the candidate behavioral and academic metrics in the sidebar to forecast placement outcomes.</div>', unsafe_allow_html=True)
 
-# Load the trained pickle model safely
+# Load the trained pickle model safely using xg.pkl
 @st.cache_resource
 def load_model():
-    with open("model.pkl", "rb") as f:
+    with open("xg.pkl", "rb") as f:
         model = pickle.load(f)
     return model
 
 try:
     model = load_model()
 except FileNotFoundError:
-    st.error("⚠️ 'model.pkl' not found. Please rename your pickle file to 'model.pkl' and place it in the root directory.")
+    st.error("⚠️ 'xg.pkl' not found. Please ensure your pickle file is named 'xg.pkl' and placed in the root directory.")
     st.stop()
 
 # Sidebar Inputs for features
-st.sidebar.header("📥 Student Metrics Input")
+st.sidebar.header("📥 Candidate Metrics Input")
 
 study_hours = st.sidebar.number_input("Study Hours", min_value=0, max_value=24, value=5)
 attendance = st.sidebar.slider("Attendance Rate (%)", min_value=0, max_value=100, value=85)
@@ -79,10 +79,10 @@ input_data = pd.DataFrame([{
 col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:
-    st.write("### 📊 Metrics Summary View")
+    st.write("### 📊 Candidate Metrics Summary")
     st.dataframe(input_data, hide_index=True)
     
-    if st.button("🚀 Analyze Performance", use_container_width=True):
+    if st.button("🚀 Run Placement Analysis", use_container_width=True):
         # Predict using model
         prediction_num = model.predict(input_data)[0]
         
@@ -94,17 +94,16 @@ with col2:
             confidence = None
 
         st.markdown("---")
-        st.write("### 🎯 Classification Result")
+        st.write("### 🎯 HireCast AI Prediction")
         
-        # Convert numerical prediction to categorical
+        # Convert numerical prediction to Placement categories
         if prediction_num == 1:
-            category_result = "Pass"
             st.balloons()
-            st.success(f"🎉 **Status:** {category_result}")
+            st.success("🎉 **Status: PLACED**")
+            st.markdown("💡 *The candidate meets the benchmark criteria for successful recruitment.*")
         else:
-            category_result = "Fail / Risk of Failure"
-            st.sidebar.warning("Attention Required")
-            st.error(f"⚠️ **Status:** {category_result}")
+            st.error("⚠️ **Status: UNPLACED**")
+            st.markdown("💡 *The candidate is currently at risk. Consider strengthening academic or technical scores.*")
             
         if confidence:
-            st.info(f"🔍 **Model Confidence Level:** {confidence:.2f}%")
+            st.info(f"🔍 **Prediction Confidence:** {confidence:.2f}%")
